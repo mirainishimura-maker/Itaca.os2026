@@ -3,7 +3,14 @@
 Plataforma Integral de Gestión y Desarrollo Humano
 """
 import streamlit as st
-import sys, os
+import sys
+import os
+
+# Esto asegura que Streamlit encuentre tus carpetas 'components' y 'pages'
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from config import APP_NAME, APP_ICON, GLOBAL_CSS
+import database as db
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(__file__))
