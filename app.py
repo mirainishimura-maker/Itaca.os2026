@@ -5,15 +5,12 @@ Plataforma Integral de Gestión y Desarrollo Humano
 import streamlit as st
 import sys
 import os
+import importlib
 
-# Esto asegura que Streamlit encuentre tus carpetas 'components' y 'pages'
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-from config import APP_NAME, APP_ICON, GLOBAL_CSS
-import database as db
-
-# Add project root to path
-sys.path.insert(0, os.path.dirname(__file__))
+# ── CRITICAL: Ensure project root is in Python path ──
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 from config import APP_NAME, APP_ICON, GLOBAL_CSS
 import database as db
@@ -32,39 +29,70 @@ st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
 # ── INIT DB ──
 db.init_db()
 
-# ── SIDEBAR ──
+# ═══════════════════════════════════════════════════════
+# 🪪 BLOQUEO DE PASAPORTE: Si no tiene DISC → forzar test
+# ═══════════════════════════════════════════════════════
+def _check_pasaporte():
+    """
+    Retorna True si el usuario necesita completar el Pasaporte.
+    Condición: tiene email seleccionado pero NO tiene arquetipo_disc.
+    """
+    email = st.session_state.get("user_email")
+    if not email:
+        return False  # No hay usuario seleccionado aún
+    ident = db.get_identidad(email)
+    if not ident:
+        return False
+    # Si no tiene arquetipo → necesita Pasaporte
+    return not ident.get("arquetipo_disc")
+
+# ── SIDEBAR (siempre renderizar para seleccionar usuario) ──
 from components.sidebar import render_sidebar
 render_sidebar()
 
-# ── ROUTER ──
-page = st.session_state.get("current_page", "Inicio")
+# ── VERIFICAR PASAPORTE ──
+necesita_pasaporte = _check_pasaporte()
 
-if page == "Inicio":
-    from pages.home import render
-    render()
-elif page == "Mi Esencia":
-    from pages.mi_esencia import render
-    render()
-elif page == "Mi Estrategia":
-    from pages.mi_estrategia import render
-    render()
-elif page == "Mi Hexágono":
-    from pages.hexagono import render
-    render()
-elif page == "Cultura Ítaca":
-    from pages.cultura import render
-    render()
-elif page == "Mi Brújula":
-    from pages.brujula import render
-    render()
-elif page == "Mis Logros":
-    from pages.logros import render
-    render()
-elif page == "Notificaciones":
-    from pages.notificaciones import render
-    render()
-elif page == "Admin Dashboard":
-    from pages.admin import render
-    render()
+if necesita_pasaporte:
+    # ══════════════════════════════════════════
+    # MODO PASAPORTE: Solo mostrar el test DISC
+    # El sidebar ya se renderizó (para que seleccione usuario)
+    # pero forzamos la vista al Pasaporte
+    # ══════════════════════════════════════════
+    try:
+        from pages.pasaporte import render as render_pasaporte
+        render_pasaporte()
+    except Exception as e:
+        st.error(f"Error cargando Pasaporte: {e}")
+        import traceback
+        st.code(traceback.format_exc())
+
 else:
-    st.error(f"Página no encontrada: {page}")
+    # ══════════════════════════════════════════
+    # MODO NORMAL: Navegación completa
+    # ══════════════════════════════════════════
+    PAGE_MAP = {
+        "Inicio": "pages.home",
+        "Mi Esencia": "pages.mi_esencia",
+        "Mi Estrategia": "pages.mi_estrategia",
+        "Mi Hexágono": "pages.hexagono",
+        "Cultura Ítaca": "pages.cultura",
+        "Mi Brújula": "pages.brujula",
+        "Mis Logros": "pages.logros",
+        "Notificaciones": "pages.notificaciones",
+        "Admin Dashboard": "pages.admin",
+    }
+
+    page = st.session_state.get("current_page", "Inicio")
+    module_name = PAGE_MAP.get(page)
+
+    if module_name:
+        try:
+            mod = importlib.import_module(module_name)
+            mod.render()
+        except Exception as e:
+            st.error(f"Error cargando '{page}': {e}")
+            import traceback
+            st.code(traceback.format_exc())
+    else:
+        st.error(f"Página no encontrada: {page}")
