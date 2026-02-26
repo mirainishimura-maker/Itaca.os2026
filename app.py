@@ -37,7 +37,7 @@ def _check_pasaporte():
     Retorna True si el usuario necesita completar el Pasaporte.
     Condición: tiene email seleccionado pero NO tiene arquetipo_disc.
     """
-    email = st.session_state.get("user_email")
+    email = st.session_state.get("current_user")
     if not email:
         return False  # No hay usuario seleccionado aún
     ident = db.get_identidad(email)
