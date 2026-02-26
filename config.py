@@ -129,6 +129,36 @@ COMPETENCIAS_IE = [
 # ── ESCALA DE EVALUACIÓN ──
 ESCALA = {1: "Crítico", 2: "En riesgo", 3: "En desarrollo", 4: "Sólido", 5: "Ejemplar"}
 
+# ═══════════════════════════════════════════
+# NUEVAS CONSTANTES v2.0
+# ═══════════════════════════════════════════
+
+# CRM — El Puerto
+CRM_ESTADOS = ["Nuevo", "Contactado", "Inscrito", "Perdido"]
+CRM_ORIGENES = ["Pauta", "Orgánico", "Referido", "Evento", "Redes"]
+CRM_PRECALIFICACION = ["Alta", "Media", "Baja"]
+
+# Finanzas — La Bóveda
+FINANZAS_TIPOS = ["Ingreso", "Egreso"]
+FINANZAS_CATEGORIAS_INGRESO = ["Cuota", "Matrícula", "Taller", "Evento", "Consultoría", "Otro"]
+FINANZAS_CATEGORIAS_EGRESO = ["Materiales", "Planilla", "Alquiler", "Marketing", "Servicios", "Otro"]
+
+# Escudo de Esparta (umbrales)
+ESCUDO_ESTRES_LIMITE = 5
+ESCUDO_TAREAS_VENCIDAS_LIMITE = 3
+
+# Oráculo de Fugas (umbrales)
+ORACULO_ESTRES_AVG = 4
+ORACULO_FAROS_MIN = 0
+ORACULO_TAREAS_VENCIDAS = 2
+
+# Matriz 9-Box
+NINEBOX_LABELS = {
+    "Alto/Alto": "⭐ Estrella", "Alto/Medio": "📈 Alto Potencial", "Alto/Bajo": "🧩 Enigma",
+    "Medio/Alto": "💪 Profesional Clave", "Medio/Medio": "✅ Contribuidor", "Medio/Bajo": "📋 Mantener",
+    "Bajo/Alto": "🎯 Especialista", "Bajo/Medio": "⚠️ En Desarrollo", "Bajo/Bajo": "🔴 Acción Urgente",
+}
+
 # ── CSS GLOBAL ──
 GLOBAL_CSS = """
 <style>
