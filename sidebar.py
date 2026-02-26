@@ -42,6 +42,12 @@ def render_sidebar():
         
         st.divider()
         
+        # ── BLOQUEO PASAPORTE: Si no tiene DISC, ocultar navegación ──
+        if identidad and not identidad.get("arquetipo_disc"):
+            st.markdown("---")
+            st.warning("🪪 Completa tu Pasaporte Ítaca para desbloquear el sistema.")
+            return  # No mostrar botones de navegación
+        
         # Navigation
         pages = [
             ("🏠", "Inicio", True),
