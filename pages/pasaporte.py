@@ -223,7 +223,7 @@ def calcular_disc(respuestas):
 # RENDER — PANTALLA DEL PASAPORTE
 # ═══════════════════════════════════════════
 def render():
-    email = st.session_state.get("user_email")
+    email = st.session_state.get("current_user")
     if not email:
         st.warning("Selecciona un usuario primero.")
         return
